@@ -1,0 +1,140 @@
+<html>
+
+<head>
+<title>Sistema de Part&iacute;culas</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="prototype.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript" src="shaders.js"></script>
+<script type="text/javascript" src="runge_kutta.js"></script>
+<script type="text/javascript" src="maths.js"></script>
+<script type="text/javascript" src="algorithm.js"></script>
+<script type="text/javascript" src="gl_defs.js"></script>
+<script type="text/javascript" src="particle.js"></script>
+<script type="text/javascript" src="main.js"></script>
+
+<script id="shader-fs" type="x-shader/x-fragment"> 
+    #ifdef GL_ES
+    precision highp float;
+    #endif
+ 
+    uniform vec3 uPointLightingLocation;
+
+    varying vec4 vColor;
+    varying vec4 vPosition;
+    varying vec3 vTransformedNormal;
+    varying vec2 vTextureCoord;
+ 
+    void main(void) {
+        vec4 texColor;
+        float a = vPosition.x;
+        float b = vPosition.y;
+        float f = sqrt(a*a+b*b);
+        texColor = vec4(vColor.r,vColor.g,vColor.b,vColor.a);
+        gl_FragColor = texColor;
+    }
+</script> 
+ 
+<script id="shader-vs" type="x-shader/x-vertex"> 
+    attribute vec3 aVertexPosition;
+    attribute vec4 aVertexColor;
+    attribute vec3 aVertexNormal;
+    attribute vec2 aTextureCoord;
+ 
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+    uniform mat3 uNMatrix;
+ 
+    varying vec4 vColor;
+    varying vec4 vPosition;
+    varying vec3 vTransformedNormal;
+    varying vec2 vTextureCoord;
+ 
+    void main(void) {
+
+        vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        vTransformedNormal = uNMatrix * aVertexNormal;
+        vColor = aVertexColor;
+        vTextureCoord = aTextureCoord;
+    }
+</script> 
+
+
+</head>
+
+<body onload="webGLStart();" style="background-color:#445566;" >
+
+   <div style="text-align:center; font-size:30px; color:white;">Sistema de Part&iacute;culas con sistemas din&aacute;micos, VF, MCA y stMCA. Agosto 2013</div>
+
+    <table><tr><td style="width:700; text-align:right;">
+   <canvas id="canvas" style="border: solid; border-color:white; background-color: black;" width="380" height="380"></canvas></td>
+    <td>   <div id = "container" style = "background-color:gray; width:450; align:center;" >
+        <input type = "button" value = "Render!" style="width:100" onclick="stop = 1; animar=true; init_variables();" />
+        <input type = "button" value = "Animar/Parar" style="width:100" onclick="actualizarValores(); if(animar== false) {animar=true; tick();} else animar=false; " />
+        <input type = "button" value = "Actualizar Datos" style="width:120" onclick="actualizarValores();" />
+    <br/>
+       Dibujar Particulas cada <input id="refresco" type="text" value="15" size=5 /> iteraciones <br/>
+       Iteracion: <span id="iteracion">0</span>
+       Contorno: <span id="contorno">0</span>
+       Particulas: <span id="cantPart">0</span> <br/>
+       Seg: <span id="tiempoIt">0</span>
+       Iteraciones por segundo: <span id="promedioIt">0</span>
+        <br />
+        <table>
+            <tr>
+                  <td style="display:none" ><input id="muestreo" type="text" value="1000" size=5 /> <b>Muestreo</b></td> 
+            </tr>
+            <tr>
+                  <td style="display:none" ><input id="tiempo" type="text" value="20000" size=5 /> <b>Iteraciones</b></td> 
+            </tr>
+
+            <tr>
+                  <td style="display:none" ><input id="varcolor" type="text" value="0.0" size=5 /><b>Variaci&oacute;n de Color</b> </td>
+            </tr>
+            <tr>
+                  <td><input id="randomness" type="text" value="0.1" size=5 /><b>Randomness</b></td>
+            </tr>
+            <tr>
+                  <td ><input id="divisions" type="text" value="10" size=5 /><b>N</b></td>
+            </tr>
+            <tr>
+                  <td ><input id="vf" type="text" value="0.8" size=5 /><b>Void Fraction</b></td>
+            </tr>
+            <tr>
+                  <td ><input id="mca" type="text" value="1000" size=5 /><b>MCA</b></td>
+            </tr>
+            <tr>
+                  <td ><input id="stmca" type="text" value="700" size=5 /><b>stMCA</b></td>
+            </tr>
+
+            <tr>
+                  <td style="display:none" ><input id="varparticlecolor" type="text" value="100" size=5 /><b>stCA</b></td>
+            </tr>
+
+            <tr>
+                  <td style="display:none" ><input id="tiempoVida" type="text" value="500" size=5 /><b>Tiempo de Vida</b></td>
+            </tr>
+            <tr>
+                  <td><input id="distG" type="text" value="0.2" size=5 /><b>Distancia de la part&iacute;cula al Generador</b></td>
+            </tr>
+            <tr>
+                  <td><input id="cantG" type="text" value="100" size=5 /><b>Cantidad de Generadores</b></td>
+            </tr>
+            <tr>
+                   <td><select id="sembrado">
+                        <option value=0  >Aleatorio</option>
+                        <option value=1 selected >Uniforme</option>
+                   </select>
+                   <b>Sembrado de Generadores</b>
+                    </td>
+            </tr>
+        </table>
+       </td></tr></table>
+    </div>
+</body>
+
+</html>
+
