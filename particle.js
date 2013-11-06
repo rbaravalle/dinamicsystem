@@ -43,6 +43,7 @@ function particle(i, lifet) {
     this.i = i;
 
     this.contorno = [];
+    this.size = 0;
 
     this.tiempoDeVida = lifet
     this.tActual = 0;
@@ -106,6 +107,8 @@ particle.prototype.add = function(x,y) {
     }
     this.contorno.push(new xyd(bestX,bestY,deP));
 
+    this.size = this.size+1
+
     this.setBorder(x,y);
 };
 
@@ -121,8 +124,10 @@ particle.prototype.calculatePriority = function(x,y,xp) {
 
 // set the contourn of the particle with this particle ID (i)
 particle.prototype.setBorder = function(x,y) {
-    for(var i = -sep; i < sep; i++)
-        for(var j = -sep; j < sep; j++) {
+    //if(this.size > Math.floor(MCA/2)) return;
+    sep2 = this.fsize()
+    for(var i = -sep2; i < sep2; i++)
+        for(var j = -sep2; j < sep2; j++) {
             pos = (x+i)+(y+j)*maxcoord;
             if(pos >= 0 && pos < maxcoord2) occupied2[pos] = this.i;
         }
@@ -130,8 +135,11 @@ particle.prototype.setBorder = function(x,y) {
 
 // returns true if it is not possible to avoid other particles
 particle.prototype.searchBorder = function(x,y) {
-    for(var i = -sep; i < sep; i++)
-        for(var j = -sep; j < sep; j++) {
+    //alert(this.size)
+    //if(this.size > Math.floor(MCA/2)) return false;
+    sep2 = this.fsize()
+    for(var i = -sep2; i < sep2; i++)
+        for(var j = -sep2; j < sep2; j++) {
             pos = (x+i)+(y+j)*maxcoord;
             v = occupied2[pos];
             if(pos >= 0 && pos < maxcoord2 && v && v!=this.i) return true;
@@ -175,6 +183,13 @@ particle.prototype.grow = function() {
     this.contorno.splice(0,h);
 };
 
+particle.prototype.fsize = function() {
+    s = this.size
+    if(s > MCA*0.8) return 8
+    if(s > MCA*0.6) return 6
+    if(s > MCA*0.4) return 4
+    if(s < MCA*0.4) return 2
+}
 
 particle.prototype.morir = function() {
     sparticles[this.i] = false;

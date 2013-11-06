@@ -1,7 +1,7 @@
 var CANT_PARTICLES;
 var RANDOM = 0;
 var TIEMPO;
-var maxcoord = 380;
+var maxcoord = 600;
 var maxcoord2 = maxcoord*maxcoord;
 var m1 = 1/maxcoord;
 var largoCont;
@@ -54,7 +54,8 @@ var generadores;
 var TIEMPO_VIDA;
 
 var gl;
-var sep = 6; // separation among particles
+var sep = 2; // separation among particles
+var diffBubbles = 20;
 
 
 function init_particles() {
@@ -66,6 +67,15 @@ function init_particles() {
             particles.push(new particle(k++, lt[i]));
             sparticles.push(true); // la particula esta viva            
         }
+
+    for(var i = 0; i < particles.length; i++) {
+        for(h = 0; h < 4; h++)
+            if(Math.random() > 0.8) {
+                for(var j = 0; j < diffBubbles; j++)
+                    particles[i].grow();
+            }
+    }
+    dibujarParticulas()
     
 }
 

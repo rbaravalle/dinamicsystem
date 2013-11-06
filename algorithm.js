@@ -6,13 +6,29 @@ function mover() {
     for(var i = 0; i < particles.length; i++) {
        var pi = particles[i];
 
-       if(pi.tActual > pi.tiempoDeVida) { pi.morir(); m.push(i); }
-       else { pi.grow(); largoCont += pi.contorno.length;}
+       /*if(pi.tActual == MCA/2) { // it must have sons
+        k = particles.length
+        for(var w = 0; w < 1; w++){
+                particles.push(new particle(k++, MCA));
+                sparticles.push(true); // la particula esta viva            
+            }
+       }*/
+
+       if(pi.tActual > 2*MCA) { pi.morir(); m.push(i); }
+       else { 
+        for(var w = 0; w < Math.max(fn(pi.size),1); w++)
+            pi.grow(); 
+        largoCont += pi.contorno.length;
+       }
     }
 
-    for(var i = 0; i < m.length; i++)
-        particles.splice(m[i],1);
+    //for(var i = 0; i < m.length; i++)
+    //    particles.splice(m[i],1);
   
+}
+
+function fn(size) {
+    return Math.floor(size/2.0)
 }
 
 
@@ -106,6 +122,7 @@ function tick() {
 
 function ocupada(i) {
     var o = occupied[i].particle;
+    if (o>= 0 && particles[o] < MCA/4) return false;
     return (o >= 0 && sparticles[o]);
 }
 

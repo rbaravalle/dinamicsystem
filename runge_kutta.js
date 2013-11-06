@@ -1,20 +1,20 @@
 var dT = 0.05;
-var factual = 4;
+var factual = 3;
 
 // Dinamic Systems
 var funcs = [function(v) { var x = v[0]; var y = v[1]; return [x*x-y*y+1,2*x*y+1]; },
 function(v) { var x = v[0]; var y = v[1]; return [(x*x+y*y), (x*x+y*y)]; },
 function(v) { var x = v[0]; var y = v[1]; return [x*(3-x-2*y), y*(2-x-y)]; },
 function(v) { var x = v[0]; var y = v[1]; return [x*x*y, x*x - y*y]; },
-function(v) { var x = v[0]; var y = v[1]; return [y, -Math.sin(x)]},
+function(v) { var x = v[0]; var y = v[1]; return [y,-Math.sin(x)]},
 function(v) { var x = v[0]; var y = v[1]; return [-x*(Math.pow(Math.E,-y)), -y]}]
 
-// multiplica un vector con un escalar
+// multiply vector with an scalar
 function multV(x,e) {
     return [x[0]*e,x[1]*e];
 }
 
-// suma dos vectores
+// vector sum
 function sumarV(x,y) {
     return [x[0]+y[0],x[1]+y[1]]
 }

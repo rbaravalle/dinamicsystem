@@ -70,7 +70,7 @@
    <div style="text-align:center; font-size:30px; color:white;">Sistema de Part&iacute;culas con sistemas din&aacute;micos, VF, MCA y stMCA. Agosto 2013</div>
 
     <table><tr><td style="width:700; text-align:right;">
-   <canvas id="canvas" style="border: solid; border-color:white; background-color: black;" width="380" height="380"></canvas></td>
+   <canvas id="canvas" style="border: solid; border-color:white; background-color: black;" width="600" height="600"></canvas></td>
     <td>   <div id = "container" style = "background-color:gray; width:450; align:center;" >
         <input type = "button" value = "Render!" style="width:100" onclick="stop = 1; animar=true; init_variables();" />
         <input type = "button" value = "Animar/Parar" style="width:100" onclick="actualizarValores(); if(animar== false) {animar=true; tick();} else animar=false; " />
@@ -92,22 +92,19 @@
             </tr>
 
             <tr>
-                  <td style="display:none" ><input id="varcolor" type="text" value="0.0" size=5 /><b>Variaci&oacute;n de Color</b> </td>
-            </tr>
-            <tr>
-                  <td><input id="randomness" type="text" value="0.1" size=5 /><b>Randomness</b></td>
+                  <td><input id="randomness" type="text" value="0.2" size=5 /><b>Randomness</b></td>
             </tr>
             <tr>
                   <td ><input id="divisions" type="text" value="10" size=5 /><b>N</b></td>
             </tr>
             <tr>
-                  <td ><input id="vf" type="text" value="0.8" size=5 /><b>Void Fraction</b></td>
+                  <td ><input id="vf" type="text" value="0.7" size=5 /><b>Void Fraction</b></td>
             </tr>
             <tr>
-                  <td ><input id="mca" type="text" value="1000" size=5 /><b>MCA</b></td>
+                  <td ><input id="mca" type="text" value="200" size=5 /><b>MCA</b></td>
             </tr>
             <tr>
-                  <td ><input id="stmca" type="text" value="700" size=5 /><b>stMCA</b></td>
+                  <td ><input id="stmca" type="text" value="200" size=5 /><b>stMCA</b></td>
             </tr>
 
             <tr>
