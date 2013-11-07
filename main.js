@@ -55,10 +55,11 @@ var TIEMPO_VIDA;
 
 var gl;
 var sep = 2; // separation among particles
-var diffBubbles = 20;
+var diffBubbles = 10;
+var amountSons = 12
 
 
-function init_particles() {
+function init_particles() { // simulate proving
     particles = [];
     sparticles = [];
     k = 0 // particle counter
@@ -70,9 +71,9 @@ function init_particles() {
 
     for(var i = 0; i < particles.length; i++) {
         for(h = 0; h < 4; h++)
-            if(Math.random() > 0.8) {
+            if(Math.random() > 0.9) {
                 for(var j = 0; j < diffBubbles; j++)
-                    particles[i].grow();
+                    particles[i].grow(1); // free growth
             }
     }
     dibujarParticulas()
@@ -180,7 +181,7 @@ function webGLStart() {
     initGL(canvas);
     initShaders();
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(255.0, 255.0, 255.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 }
 

@@ -6,20 +6,30 @@ function mover() {
     for(var i = 0; i < particles.length; i++) {
        var pi = particles[i];
 
-       /*if(pi.tActual == MCA/2) { // it must have sons
+       if(pi.size == MCA/2) { // it must have sons
         k = particles.length
-        for(var w = 0; w < 1; w++){
-                particles.push(new particle(k++, MCA));
+        for(var w = 0; w < amountSons; w++){
+                d = Math.random()*Math.PI*2
+                rr = 5*(Math.sqrt(pi.size/Math.PI))
+                var con = pi.contorno[w]
+                if(!con) con = pi.contorno[0]
+                if(!con) {
+                    con = new xyd(pi.xi,pi.yi,0)
+                }
+                u = con.x+Math.floor(rr*Math.cos(d))
+                v = con.y+Math.floor(rr*Math.sin(d))
+
+                particles.push(new particle(k++, MCA,u,v));
                 sparticles.push(true); // la particula esta viva            
             }
-       }*/
-
-       if(pi.tActual > 2*MCA) { pi.morir(); m.push(i); }
-       else { 
-        for(var w = 0; w < Math.max(fn(pi.size),1); w++)
-            pi.grow(); 
-        largoCont += pi.contorno.length;
        }
+
+       /*if(pi.tActual > MCA) { pi.morir(); m.push(i); }
+       else { */
+        for(var w = 0; w < fn(pi.size); w++)
+            pi.grow(randomness); 
+        largoCont += pi.contorno.length;
+       //}
     }
 
     //for(var i = 0; i < m.length; i++)
@@ -28,7 +38,11 @@ function mover() {
 }
 
 function fn(size) {
-    return Math.floor(size/2.0)
+    if(size > 20 && size < 40) return Math.floor(size/3)
+    if(size > 50) return Math.floor(1.0)
+    if(Math.random()<0.01)
+        return Math.floor(1)
+    else return Math.floor(0)
 }
 
 
@@ -117,12 +131,12 @@ function tick() {
         $('promedioIt').innerHTML = (1000*(t)/Math.abs(t2-t1)).toFixed(2) ;
         delete d2;
     }
-    if(t < TIEMPO-1 && particles.length > 0) requestAnimFrame(tick);
+    if(t < TIEMPO-1 && particles.length > 0 && largoCont > 0) requestAnimFrame(tick);
 }
 
 function ocupada(i) {
     var o = occupied[i].particle;
-    if (o>= 0 && particles[o] < MCA/4) return false;
+    //if (o>= 0 && particles[o] < 50) return false;
     return (o >= 0 && sparticles[o]);
 }
 

@@ -20,7 +20,7 @@ function point(i,r,g,b,a,p) {
     this.a = a || 0;
 }
 
-function particle(i, lifet) {
+function particle(i, lifet,posX,posY) {
     var c = aleat(generadores.length);
     var gx = generadores[c].x;
     var gy = generadores[c].y;
@@ -28,16 +28,19 @@ function particle(i, lifet) {
     this.xi = Math.floor(gx + distG*(Math.random()*2-1)*maxcoord);
     this.yi = Math.floor(gy + distG*(Math.random()*2-1)*maxcoord);
 
-    var x = this.xi;
-    var y = this.yi;
+    var x = posX || this.xi;
+    var y = posY || this.yi;
     if(x < 0) x = 0;
     if(y < 0) y = 0;
     if(x >= maxcoord) x = maxcoord-1;
     if(y >= maxcoord) y = maxcoord-1;
 
-    this.r = 255;
-    this.g = 255;
-    this.b = 255;
+    this.xi = x
+    this.yi = y
+
+    this.r = 0;
+    this.g = 0;
+    this.b = 0;
     this.a = 1.0;
 
     this.i = i;
@@ -55,7 +58,7 @@ function particle(i, lifet) {
    
 }
 
-particle.prototype.add = function(x,y) { 
+particle.prototype.add = function(x,y,randomParam) { 
     var pos = x+y*maxcoord;
     if(!occupied[pos]) return;
     var r,g,b;
@@ -103,7 +106,7 @@ particle.prototype.add = function(x,y) {
             bestX = xh;
             bestY = yh;
         }
-        if(Math.random()>(1-randomness)) this.contorno.push(new xyd(xh,yh,de));
+        if(Math.random()>(1-randomParam)) this.contorno.push(new xyd(xh,yh,de));
     }
     this.contorno.push(new xyd(bestX,bestY,deP));
 
@@ -124,7 +127,6 @@ particle.prototype.calculatePriority = function(x,y,xp) {
 
 // set the contourn of the particle with this particle ID (i)
 particle.prototype.setBorder = function(x,y) {
-    //if(this.size > Math.floor(MCA/2)) return;
     sep2 = this.fsize()
     for(var i = -sep2; i < sep2; i++)
         for(var j = -sep2; j < sep2; j++) {
@@ -135,14 +137,13 @@ particle.prototype.setBorder = function(x,y) {
 
 // returns true if it is not possible to avoid other particles
 particle.prototype.searchBorder = function(x,y) {
-    //alert(this.size)
-    //if(this.size > Math.floor(MCA/2)) return false;
     sep2 = this.fsize()
     for(var i = -sep2; i < sep2; i++)
         for(var j = -sep2; j < sep2; j++) {
             pos = (x+i)+(y+j)*maxcoord;
             v = occupied2[pos];
-            if(pos >= 0 && pos < maxcoord2 && v && v!=this.i) return true;
+            if(this.size < 8*MCA && v > 0 && particles[v].size < this.size/4) return false
+            if(v && v!=this.i) return true;
         }
     return  false;
 }
@@ -157,8 +158,9 @@ function compare(a,b){
     return 0;
 }
 
-particle.prototype.grow = function() {
-    this.tActual++;//=advanceT;    
+particle.prototype.grow = function(randomParam) {
+    if(Math.random > this.randomm) return;
+    this.tActual++;
     var maxim = this.contorno.length
     var h;
     for(h = 0; h < maxim; h++) {
@@ -168,14 +170,8 @@ particle.prototype.grow = function() {
         var pos = nx+ny*maxcoord;
         var o = occupied[pos];
         if(o && !ocupada(pos)) {
-            //nx2 = nx-maxcoord/2
-            //ny2 = ny-maxcoord/2
-            //p = Math.sqrt(nx2*nx2+ny2*ny2);
-            // it is more likely that a particle will grow more in the center (for bread)
-            //q = Math.sqrt(2)*(maxcoord/2.0)
-            //if(Math.random()*1.2 > p/q)
             if(!this.searchBorder(nx,ny)) {
-                this.add(nx,ny);
+                this.add(nx,ny,randomParam);
                 break;
             }
         }
