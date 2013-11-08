@@ -55,8 +55,8 @@ var TIEMPO_VIDA;
 
 var gl;
 var sep = 2; // separation among particles
-var diffBubbles = 10;
-var amountSons = 12
+var diffBubbles = 18;
+var amountSons = 5
 
 
 function init_particles() { // simulate proving
@@ -65,7 +65,7 @@ function init_particles() { // simulate proving
     k = 0 // particle counter
     for(var i = 0; i < N; i++)
         for(var j = 0; j < cp[i]; j++) {
-            particles.push(new particle(k++, lt[i]));
+            particles.push(new particle(k++, lt[i],-1,-1,1));
             sparticles.push(true); // la particula esta viva            
         }
 

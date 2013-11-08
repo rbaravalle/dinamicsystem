@@ -5,8 +5,9 @@ function mover() {
     var m = [];
     for(var i = 0; i < particles.length; i++) {
        var pi = particles[i];
-
-       if(pi.size == MCA/2) { // it must have sons
+       if(pi.size > 6*MCA) { pi.morir(); m.push(i); }
+       if(pi.repr == 0 && pi.size > Math.floor(MCA/2)) { // it must have sons
+        pi.repr = 1
         k = particles.length
         for(var w = 0; w < amountSons; w++){
                 d = Math.random()*Math.PI*2
@@ -23,13 +24,11 @@ function mover() {
                 sparticles.push(true); // la particula esta viva            
             }
        }
-
-       /*if(pi.tActual > MCA) { pi.morir(); m.push(i); }
-       else { */
-        for(var w = 0; w < fn(pi.size); w++)
+       else { 
+        for(var w = 0; w < pi.fn(); w++)
             pi.grow(randomness); 
         largoCont += pi.contorno.length;
-       //}
+       }
     }
 
     //for(var i = 0; i < m.length; i++)
@@ -37,13 +36,6 @@ function mover() {
   
 }
 
-function fn(size) {
-    if(size > 20 && size < 40) return Math.floor(size/3)
-    if(size > 50) return Math.floor(1.0)
-    if(Math.random()<0.01)
-        return Math.floor(1)
-    else return Math.floor(0)
-}
 
 
 function dibujarParticulas() {
@@ -73,7 +65,7 @@ function dibujarParticulas() {
             var y = Math.floor(j*m1);
             
             vertices.push(x*m1,y*m1,0.0);
-            colors.push(p.r,p.g,p.b,1.0);
+            colors.push(0,0,0,1.0);
             cant++;
         }
     }

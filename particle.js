@@ -20,7 +20,7 @@ function point(i,r,g,b,a,p) {
     this.a = a || 0;
 }
 
-function particle(i, lifet,posX,posY) {
+function particle(i, lifet,posX,posY,randomParam) {
     var c = aleat(generadores.length);
     var gx = generadores[c].x;
     var gy = generadores[c].y;
@@ -28,8 +28,13 @@ function particle(i, lifet,posX,posY) {
     this.xi = Math.floor(gx + distG*(Math.random()*2-1)*maxcoord);
     this.yi = Math.floor(gy + distG*(Math.random()*2-1)*maxcoord);
 
-    var x = posX || this.xi;
-    var y = posY || this.yi;
+    var x = this.xi;
+    var y = this.yi;
+
+    if (posX >= 0) {
+        x = posX
+        y = posY
+    }
     if(x < 0) x = 0;
     if(y < 0) y = 0;
     if(x >= maxcoord) x = maxcoord-1;
@@ -50,15 +55,17 @@ function particle(i, lifet,posX,posY) {
 
     this.tiempoDeVida = lifet
     this.tActual = 0;
+    this.repr = 0
 
     this.tInit = t;
     this.randomm = Math.random();
 
-    this.add(x,y);
+    this.add(x,y,randomParam);
    
 }
 
 particle.prototype.add = function(x,y,randomParam) { 
+    randomParam = randomParam || randomness
     var pos = x+y*maxcoord;
     if(!occupied[pos]) return;
     var r,g,b;
@@ -77,16 +84,10 @@ particle.prototype.add = function(x,y,randomParam) {
 
     // Alpha blending?
     var op = occupied[pos];
-    var src_a = op.a;
-    var alp = this.a*(1-src_a);
 
     var pos = x+y*maxcoord;
 
     occupied[pos].particle = this.i;
-    occupied[pos].r = this.r;
-    occupied[pos].g = this.g;
-    occupied[pos].b = this.b;
-    occupied[pos].a = this.a;
 
     var d = Math.sqrt(x*x+y*y);
     var xp = [];
@@ -142,7 +143,7 @@ particle.prototype.searchBorder = function(x,y) {
         for(var j = -sep2; j < sep2; j++) {
             pos = (x+i)+(y+j)*maxcoord;
             v = occupied2[pos];
-            if(this.size < 8*MCA && v > 0 && particles[v].size < this.size/4) return false
+            if(this.size < 10*MCA && v > 0 && particles[v].size < this.size) return false
             if(v && v!=this.i) return true;
         }
     return  false;
@@ -159,7 +160,6 @@ function compare(a,b){
 }
 
 particle.prototype.grow = function(randomParam) {
-    if(Math.random > this.randomm) return;
     this.tActual++;
     var maxim = this.contorno.length
     var h;
@@ -179,12 +179,23 @@ particle.prototype.grow = function(randomParam) {
     this.contorno.splice(0,h);
 };
 
+// distance for self avoiding
 particle.prototype.fsize = function() {
     s = this.size
-    if(s > MCA*0.8) return 8
-    if(s > MCA*0.6) return 6
-    if(s > MCA*0.4) return 4
-    if(s < MCA*0.4) return 2
+    if(s > MCA*0.8) return 4
+    if(s > MCA*0.6) return 3
+    if(s > MCA*0.4) return 2
+    if(s < MCA*0.4) return 1
+}
+
+
+particle.prototype.fn = function () {
+    size = this.size
+    if(size > 20 && size < 400) return Math.floor(size/8)
+    if(this.randomm > 0.9)
+        return Math.floor(size/16)
+    else if(Math.random() < 0.05) return Math.floor(1)
+    return 0;
 }
 
 particle.prototype.morir = function() {

@@ -1,5 +1,5 @@
-var dT = 0.05;
-var factual = 0;
+var dT = 0.01;
+var factual = 4;
 
 // Dinamic Systems
 var funcs = [function(v) { var x = v[0]; var y = v[1]; return [x*x-y*y+1,2*x*y+1]; },
