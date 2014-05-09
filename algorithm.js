@@ -6,7 +6,7 @@ function mover() {
     for(var i = 0; i < particles.length; i++) {
        var pi = particles[i];
        if(pi.size > 6*MCA) { pi.morir(); m.push(i); }
-       if(pi.repr == 0 && pi.size > Math.floor(MCA/2)) { // it must have sons
+       /*if(pi.repr == 0 && pi.size > Math.floor(MCA/2)) { // it must have sons
         pi.repr = 1
         k = particles.length
         for(var w = 0; w < amountSons; w++){
@@ -23,7 +23,7 @@ function mover() {
                 particles.push(new particle(k++, MCA,u,v));
                 sparticles.push(true); // la particula esta viva            
             }
-       }
+       }*/
        else { 
         for(var w = 0; w < pi.fn(); w++)
             pi.grow(randomness); 

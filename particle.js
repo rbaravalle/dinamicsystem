@@ -89,27 +89,36 @@ particle.prototype.add = function(x,y,randomParam) {
 
     occupied[pos].particle = this.i;
 
-    var d = Math.sqrt(x*x+y*y);
-    var xp = [];
-    xp[0] = toSpace(x);
-    xp[1] = toSpace(y);
-    xp = runge_kutta(xp,factual,dT);
-    bestX = vals[0].x;
-    bestY = vals[0].y;
-    var de = 0;
-    deP = this.calculatePriority(bestX,bestY,xp);
-    for(var i = 1; i < vals.length; i++) {
-        xh = vals[i].x;
-        yh = vals[i].y;
-        de = this.calculatePriority(xh,yh,xp);
-        if(de <deP) {
-            deP = de;
-            bestX = xh;
-            bestY = yh;
+    if(true){
+        var d = Math.sqrt(x*x+y*y);
+        var xp = [];
+        xp[0] = toSpace(x);
+        xp[1] = toSpace(y);
+        xp = runge_kutta(xp,factual,dT);
+        bestX = vals[0].x;
+        bestY = vals[0].y;
+        var de = 0;
+        deP = this.calculatePriority(bestX,bestY,xp);
+        for(var i = 1; i < vals.length; i++) {
+            xh = vals[i].x;
+            yh = vals[i].y;
+            de = this.calculatePriority(xh,yh,xp);
+            if(de <deP) {
+                deP = de;
+                bestX = xh;
+                bestY = yh;
+            }
+            if(Math.random()>(1-randomParam)) this.contorno.push(new xyd(xh,yh,de));
         }
-        if(Math.random()>(1-randomParam)) this.contorno.push(new xyd(xh,yh,de));
+        this.contorno.push(new xyd(bestX,bestY,deP));
     }
-    this.contorno.push(new xyd(bestX,bestY,deP));
+    else{
+        for(var i = 0; i < vals.length; i++) {
+            xh = vals[i].x;
+            yh = vals[i].y;
+            this.contorno.push(new xyd(xh,yh,de));
+        }
+    }
 
     this.size = this.size+1
 
@@ -143,7 +152,7 @@ particle.prototype.searchBorder = function(x,y) {
         for(var j = -sep2; j < sep2; j++) {
             pos = (x+i)+(y+j)*maxcoord;
             v = occupied2[pos];
-            if(this.size < 10*MCA && v > 0 && particles[v].size < this.size) return false
+            //if(this.size < 10*MCA && v > 0 && particles[v].size < this.size) return false
             if(v && v!=this.i) return true;
         }
     return  false;
@@ -181,15 +190,17 @@ particle.prototype.grow = function(randomParam) {
 
 // distance for self avoiding
 particle.prototype.fsize = function() {
+    return 2;
     s = this.size
-    if(s > MCA*0.8) return 4
-    if(s > MCA*0.6) return 3
+    if(s > MCA*0.8) return 12
+    if(s > MCA*0.6) return 6
     if(s > MCA*0.4) return 2
     if(s < MCA*0.4) return 1
 }
 
 
 particle.prototype.fn = function () {
+    return 1;
     size = this.size
     if(size > 20 && size < 400) return Math.floor(size/8)
     if(this.randomm > 0.9)
